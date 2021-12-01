@@ -1,0 +1,41 @@
+#install necessary packages
+#see below
+
+#load packages
+library(BiocManager)
+library(DESeq2)
+library(tidyverse)
+
+
+filenameT <- c("WT1.htseq.count",	"WT2.htseq.count",	"WT3.htseq.count",	"N6.htseq.count",	"N7.htseq.count",	"N8.htseq.count",	"V6.htseq.count",	"V69.htseq.count",	"V78.htseq.count",	"III17.htseq.count",	"III64.htseq.count",	"III97.htseq.count")
+sampleT <- c("WT1",	"WT2",	"WT3",	"N6",	"N7",	"N8",	"V6",	"V69",	"V78",	"III17",	"III64",	"III97")
+genotypeT <- c("wildtype",	"wildtype",	"wildtype",	"N",	"N",	"N",	"V",	"V",	"V",	"III",	"III",	"III")
+
+JingseqT = data.frame(sampleT,filenameT,genotypeT)
+
+JingseqT$genotypeT <- factor(JingseqT$genotypeT, levels = c("wildtype","N", "V", "III"))
+
+Jingseq2T = DESeqDataSetFromHTSeqCount(JingseqT, design= ~genotypeT)
+
+ddsT <- DESeq(Jingseq2T)
+
+resultsNames(ddsT)
+
+resN <- results(ddsT, name = "genotypeT_N_vs_wildtype")
+
+resV <- results(ddsT, name = "genotypeT_V_vs_wildtype")
+
+resIII <- results(ddsT, name = "genotypeT_III_vs_wildtype")
+
+#dataQC visualizations
+
+plotMA(resIII, ylim=c(-8,8))
+
+hist(resN$pvalue, breaks=100, col="skyblue",border = "slateblue",main="")
+
+vsdT <- vst(ddsT, blind=FALSE)
+rldT <- rlog(ddsT, blind=FALSE)
+ntdT <- normTransform(ddsT)
+meanSdPlot(assay(ntdT))
+meanSdPlot(assay(vsdT))
+meanSdPlot(assay(rldT))
