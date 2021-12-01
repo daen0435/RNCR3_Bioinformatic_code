@@ -1,0 +1,22 @@
+#if not using a scheduling software ignore commands beginning with SBATCH and in place of [module load] ensure you have the proper software version installed locally or within a conda environment
+# SLURM scheduling software code begins *ensure ntasks # matches threads requested in your code
+
+#! /bin/bash
+#SBATCH --job-name=yourjobnamehere # Job name
+#SBATCH --mail-type=ALL # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=youremailhere # Where to send mail
+#SBATCH --nodes=1  # Number of distinct nodes requested
+#SBATCH --ntasks=1 # Number of CPU (processer cores i.e. tasks)
+#SBATCH --time=02:00:00 # Time limit hrs:min:sec
+#SBATCH -p short #priority queue name which will differ by cluster
+#SBATCH --mem=50gb # Memory limit
+#SBATCH --output=/desiredpathforoutputfiles/filenameQC.%j.out #ensure that path you define here already exists
+#SBATCH --error=/desiredpathforerrorfiles/filenameQC.%j.err
+
+# scheduling software code ends
+
+module load fastqc/0.11.8
+fastqc /pathtoyourfilename/filename -o /desiredoutputpathway/
+echo 
+
+
